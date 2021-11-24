@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \.txt
+  | \.flake8
+  | \.pre-commit-config.yaml
+  | _build
+  | buck-out
+  | build
+  | dist
+  | Pipfile
+  | Pipfile.lock
+)/
+'''
