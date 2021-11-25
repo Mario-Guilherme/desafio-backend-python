@@ -4,6 +4,8 @@ from database import Base
 
 from typing import List
 
+from interface import BibliotecaInterface
+
 
 class Biblioteca(Base):
     __tablename__ = "biblioteca"
@@ -12,7 +14,7 @@ class Biblioteca(Base):
     titulo: str = Column(String)
     editora: str = Column(String)
     foto: str = Column(String)
-    autores: str = Column(ARRAY(String))
+    autores: List[str] = Column(ARRAY(String))
 
     def __init__(
         self,
@@ -27,6 +29,11 @@ class Biblioteca(Base):
         self.titulo = titulo
         self.editora = editora
         self.autores = autores
+
+    def update(self, changes: BibliotecaInterface):
+        for key, val in changes.items():
+            setattr(self, key, val)
+        return self
 
     def __repr__(self) -> str:
         return f"<Title {self.titulo}>"
