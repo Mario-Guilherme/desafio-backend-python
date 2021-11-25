@@ -16,20 +16,6 @@ class Biblioteca(Base):
     foto: str = Column(String)
     autores: List[str] = Column(ARRAY(String))
 
-    def __init__(
-        self,
-        id: int = None,
-        titulo: str = None,
-        editora: str = None,
-        foto: str = None,
-        autores: List[str] = None,
-    ) -> None:
-
-        self.id = id
-        self.titulo = titulo
-        self.editora = editora
-        self.autores = autores
-
     def update(self, changes: BibliotecaInterface):
         for key, val in changes.items():
             setattr(self, key, val)
