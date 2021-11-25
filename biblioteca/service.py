@@ -7,5 +7,6 @@ from typing import List
 
 
 class BibliotecaService:
-
-    pass
+    @staticmethod
+    def get_all() -> List[Biblioteca]:
+        return Biblioteca.query.all()
