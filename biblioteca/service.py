@@ -22,3 +22,17 @@ class BibliotecaService:
         db_session.commit()
 
         return [id]
+
+    @staticmethod
+    def create(data_atributte: BibliotecaInterface) -> Biblioteca:
+        biblioteca = Biblioteca(
+            titulo=data_atributte["titulo"],
+            editora=data_atributte["editora"],
+            foto=data_atributte["foto"],
+            autores=data_atributte["autores"],
+        )
+
+        db_session.add(biblioteca)
+        db_session.commit()
+
+        return biblioteca
