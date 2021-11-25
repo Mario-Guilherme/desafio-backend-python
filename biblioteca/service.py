@@ -1,3 +1,11 @@
 from models import Biblioteca
 
-from database import init_db
+
+from database import db_session
+
+from typing import List
+
+
+class BibliotecaService:
+
+    pass
