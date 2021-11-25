@@ -1,8 +1,6 @@
-from re import I
-from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ARRAY
 
-from database import Base, db_session
+from database import Base
 
 from typing import List
 
