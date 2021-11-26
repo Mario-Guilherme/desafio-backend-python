@@ -28,6 +28,9 @@ class BibliotecaResource(Resource):
 
 @ns.route("/obras/<int:id>")
 class BibliotecaIdResource(Resource):
+    def put(self, id):
+        pass
+
     def delete(self, id):
         livro = LivroService().find_id_livro(id)
 
