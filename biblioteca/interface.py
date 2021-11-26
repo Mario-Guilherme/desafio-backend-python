@@ -1,9 +1,8 @@
 from typing import Dict
 from typing import List
-from typing import Union
 
 
-class BibliotecaInterface(Dict[Union[int, str, List[str]]]):
+class LivroInterface(Dict):
     id: int
     titulo: str
     editora: str
