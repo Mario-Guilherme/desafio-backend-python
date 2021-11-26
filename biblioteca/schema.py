@@ -1,6 +1,4 @@
-from flask_restx import model
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
-from marshmallow import fields
 
 from biblioteca.models import Livro, Autor
 
