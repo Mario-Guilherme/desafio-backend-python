@@ -1,20 +1,21 @@
-from sqlalchemy import Column, Integer, String, ARRAY
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 from database import Base
+from biblioteca.interface import BibliotecaInterface
 
 from typing import List
 
-from interface import BibliotecaInterface
 
-
-class Biblioteca(Base):
-    __tablename__ = "biblioteca"
+class Livro(Base):
+    __tablename__ = "livro"
 
     id: int = Column(Integer, primary_key=True)
     titulo: str = Column(String)
     editora: str = Column(String)
     foto: str = Column(String)
-    autores: List[str] = Column(ARRAY(String))
+
+    autores = relationship("Autor", backref="livro")
 
     def update(self, changes: BibliotecaInterface):
         for key, val in changes.items():
