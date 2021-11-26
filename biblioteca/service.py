@@ -27,26 +27,30 @@ class LivroService:
         return [id]
 
     @staticmethod
-    def create(data_atributte: interface_livro_autor) -> interface_livro_autor:
-        print(data_atributte)
+    def __save_db(value):
+        db_session.add(value)
+        db_session.commit()
+
+    def create(self, data_atributte: interface_livro_autor) -> interface_livro_autor:
 
         livro = Livro(
             titulo=data_atributte["titulo"],
             editora=data_atributte["editora"],
             foto=data_atributte["foto"],
         )
-        db_session.add(livro)
-        db_session.commit()
-
-        autores = []
-        for autor_x in data_atributte["autores"]:
-            autor = Autor(autor_x, livro.id)
-            autores.append(autor_x)
-            db_session.add(autor)
+        self.__save_db(livro)
 
         livro_schema = LivroSchema()
         livro_schema.load()
-        # novo_titulo = schema.load(data_atributte, session=db_session)
-        db_session.commit()
 
         return livro_schema.dump(livro)
+
+    def create_autor(self, livro_id, autores) -> List[Autor]:
+
+        autores = []
+        for autor_x in autores:
+            autor = Autor(autor_x, livro_id)
+            autores.append(autor_x)
+            self.__save_db(autor)
+
+        return autores
