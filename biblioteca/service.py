@@ -1,9 +1,10 @@
+from flask import abort
 from biblioteca.models import Livro, Autor
 from database import db_session
 from biblioteca.interface import LivroInterface, AutorInterface
 from biblioteca.schema import LivroSchema, AutorSchema
 
-from typing import List, Union
+from typing import Any, List, Union
 
 import json
 
@@ -15,6 +16,7 @@ class LivroService:
     def __init__(self) -> None:
         pass
 
+    ######################### GET #############################
     @staticmethod
     def get_autor(livro_id):
         return Autor.query.filter_by(livro_id=livro_id)
@@ -39,19 +41,27 @@ class LivroService:
 
         return json.dumps(livros_autores)
 
-    @staticmethod
-    def delete_by_id(id: int) -> List[int]:
-        # livro = Livro.query.filter(Livro.id == id).first()
-        # if not biblioteca:
-        #    return []
-        # db_session.delete(biblioteca)
-        # db_session.commit()
+    ############################# DELETE ###############################################
+    def delete_by_id(self, livro: Livro, autores: List[str]) -> None:
 
-        # return [id]
-        pass
+        for autor in autores:
+            db_session.delete(autor)
+            db_session.commit()
+
+        db_session.delete(livro)
+        db_session.commit()
 
     @staticmethod
-    def __save_db(value) -> None:
+    def find_id_livro(id: int) -> Livro:
+        return Livro.query.filter(Livro.id == id).first()
+
+    @staticmethod
+    def find_id_autor(livro_id: int):
+        return Autor.query.filter(Autor.livro_id == livro_id)
+
+    ######################################### POST ##########################################
+    @staticmethod
+    def __save_db(value: Any) -> None:
         db_session.add(value)
         db_session.commit()
 
@@ -78,3 +88,17 @@ class LivroService:
 
         self.create_autor(livro.id, data_atributte["autores"])
         return json.dumps(data_atributte)
+
+    ################################# PUT ####################################
+
+    def put_livro_autor():
+        pass
+
+    def find_existing_livro(titulo: str, editora: str, foto: str) -> Union[Livro, Any]:
+        existing_livro = (
+            Livro.query.filter(Livro.titulo == titulo)
+            .filter(Livro.editora == editora)
+            .filter(Livro.foto == foto)
+            .one_or_none()
+        )
+        return existing_livro
