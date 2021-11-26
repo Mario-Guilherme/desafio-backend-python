@@ -8,3 +8,9 @@ class LivroInterface(Dict):
     editora: str
     foto: str
     autores: List[str]
+
+
+class AutorInterface(Dict):
+    id: int
+    autor: str
+    foreign_key: int
