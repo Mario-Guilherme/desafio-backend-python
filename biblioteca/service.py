@@ -16,19 +16,39 @@ class LivroService:
         pass
 
     @staticmethod
-    def get_all() -> List[Livro]:
+    def get_autor(livro_id):
+        return Autor.query.filter_by(livro_id=livro_id)
 
+    @staticmethod
+    def get_livro():
         return Livro.query.all()
+
+    def get_all(self) -> List[Union[Livro, Autor]]:
+        livros = self.get_livro()
+        livros_autores = []
+        dicionario_livro_autor = {}
+        for livro in livros:
+            dicionario_livro_autor["titulo"] = livro.titulo
+            dicionario_livro_autor["editora"] = livro.editora
+            dicionario_livro_autor["foto"] = livro.foto
+
+            autores = self.get_autor(livro.id)
+            autores_lista = [autor.autor for autor in autores]
+            dicionario_livro_autor["autores"] = autores_lista
+            livros_autores.append(dicionario_livro_autor)
+
+        return json.dumps(livros_autores)
 
     @staticmethod
     def delete_by_id(id: int) -> List[int]:
-        biblioteca = Livro.query.filter(Livro.id == id).first()
-        if not biblioteca:
-            return []
-        db_session.delete(biblioteca)
-        db_session.commit()
+        # livro = Livro.query.filter(Livro.id == id).first()
+        # if not biblioteca:
+        #    return []
+        # db_session.delete(biblioteca)
+        # db_session.commit()
 
-        return [id]
+        # return [id]
+        pass
 
     @staticmethod
     def __save_db(value) -> None:
