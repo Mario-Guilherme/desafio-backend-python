@@ -9,7 +9,7 @@ from database import db_session
 
 class LivroSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Livro
+        model: Livro = Livro
         sql_session = db_session
         load_instance = True
 
@@ -18,7 +18,7 @@ class LivroSchema(SQLAlchemyAutoSchema):
 
 class AutorSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Autor
+        model: Autor = Autor
         sql_session = db_session
         load_instace = True
 
