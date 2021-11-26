@@ -24,3 +24,12 @@ class Livro(Base):
 
     def __repr__(self) -> str:
         return f"<Title {self.titulo}>"
+
+
+class Autor(Base):
+    __tablename__ = "autor"
+
+    id: int = Column(Integer, primary_key=True)
+    autor: str = Column(String)
+
+    project_id = Column(Integer, ForeignKey("livro.id"))
