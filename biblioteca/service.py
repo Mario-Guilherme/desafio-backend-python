@@ -120,3 +120,13 @@ class LivroService:
         livro_new = Livro(titulo=titulo, editora=editora, foto=foto)
         livro_new.id = livro.id
         self.__update_db(livro_new)
+
+    def update_autor(
+        self, autores_olds: Iterable[Autor], autores_news: List[str], livro_id: int
+    ) -> None:
+
+        self.delete_autor(autores_olds)
+
+        for autor_new in autores_news:
+            autor = Autor(autor=autor_new, livro_id=livro_id)
+            self.__save_db(autor)
