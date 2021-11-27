@@ -115,3 +115,8 @@ class LivroService:
     def __update_db(value: Any) -> None:
         db_session.merge(value)
         db_session.commit()
+
+    def update_livro(self, livro: Livro, titulo: str, editora: str, foto: str) -> None:
+        livro_new = Livro(titulo=titulo, editora=editora, foto=foto)
+        livro_new.id = livro.id
+        self.__update_db(livro_new)
