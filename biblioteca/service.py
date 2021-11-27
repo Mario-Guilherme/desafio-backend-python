@@ -1,10 +1,11 @@
+import celery
 from flask import config
 from sqlalchemy.orm import selectin_polymorphic, session
 from biblioteca.models import Livro, Autor
 from database import db_session
 from biblioteca.interface import LivroInterface, AutorInterface
 from biblioteca.schema import LivroSchema, AutorSchema
-
+from celery import Celery
 from typing import Any, Iterable, List, Union
 
 import json
@@ -15,6 +16,11 @@ import os
 
 interface_livro_autor = Union[LivroInterface, AutorInterface]
 ALLOWED_EXTENSIONS = {"csv"}
+app_celery = app = Celery(
+    "tasks",
+    backend="amqp://admin:admin@localhost:5672/",
+    broker="amqp://admin:admin@localhost:5672/",
+)
 
 
 class LivroService:
@@ -161,3 +167,7 @@ class LivroService:
     def delete_csv(path):
         if os.path.exists(path):
             os.remove(path)
+
+    @app_celery.task
+    def send_email(email):
+        pass
