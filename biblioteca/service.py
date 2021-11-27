@@ -142,12 +142,12 @@ class LivroService:
             self.__save_db(autor)
 
     @staticmethod
-    def spawn_dict_temp():
+    def spawn_dict_temp() -> None:
         if not os.path.exists(os.path.join(os.getcwd(), "uploads")):
             os.makedirs(os.path.join(os.getcwd(), "uploads"))
 
     @staticmethod
-    def allowed_file(filename):
+    def allowed_file(filename) -> bool:
         return (
             "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
         )
@@ -164,10 +164,13 @@ class LivroService:
                 self.create_autor(livro_id=livro.id, autores=eval(row["autores"]))
 
     @staticmethod
-    def delete_csv(path):
+    def delete_csv(path) -> None:
         if os.path.exists(path):
             os.remove(path)
 
     @app_celery.task
-    def send_email(email):
+    def send_email(email) -> None:
+        pass
+
+    def make_file_to_email(self):
         pass
