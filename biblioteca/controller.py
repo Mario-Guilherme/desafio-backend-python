@@ -54,3 +54,8 @@ class BibliotecaIdResource(Resource):
             return Response(response=f"Livro {id} deleted", status=200)
         else:
             abort(404, f"Livro not found for Id: {id}")
+
+
+@ns.route("/upload-obras")
+class ObrasCsv(Resource):
+    pass
