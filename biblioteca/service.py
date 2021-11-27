@@ -145,3 +145,14 @@ class LivroService:
         return (
             "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
         )
+
+    def save_data_csv_db(self, path) -> None:
+        with open(path, encoding="utf-8") as file:
+            rows_csv = csv.DictReader(file)
+            for row in rows_csv:
+                livro = self.create_livro(
+                    titulo=str(row["titulo"]),
+                    editora=str(row["editora"]),
+                    foto=str(row["foto"]),
+                )
+                self.create_autor(livro_id=livro.id, autores=eval(row["autores"]))
