@@ -78,7 +78,7 @@ class ObrasCsv(Resource):
             return redirect(args.url)
         if uploaded_file and LivroService().allowed_file(uploaded_file.filename):
             file_name = secure_filename(uploaded_file.filename)
-            LivroService().spawn_dict_temp(file_name)
+            LivroService().spawn_dict_temp()
             path = os.path.join(os.getcwd() + "/uploads", file_name)
 
             uploaded_file.save(path)
@@ -88,3 +88,8 @@ class ObrasCsv(Resource):
             LivroService().delete_csv(path)
 
             return Response(status=200)
+
+
+@ns.route("/file-obras/")
+class BibliotecaNotify(Resource):
+    pass
