@@ -7,7 +7,6 @@ class LivroInterface(Dict):
     titulo: str
     editora: str
     foto: str
-    autores: List[str]
 
 
 class AutorInterface(Dict):
