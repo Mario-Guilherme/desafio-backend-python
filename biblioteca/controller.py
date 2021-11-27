@@ -1,17 +1,22 @@
 import json
-from flask import request, abort, make_response
-from flask_restx import Namespace, Resource
-from flask_accepts import accepts, responds
-from flask.wrappers import Response
-from sqlalchemy.sql.expression import delete
 
+from flask import request, abort, redirect, flash
+from flask_restx import Namespace, Resource
+from flask.wrappers import Response
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
 
 from biblioteca.models import Livro, Autor
 from biblioteca.schema import LivroSchema, AutorSchema
 from biblioteca.service import LivroService
 
+import os
+
 
 ns = Namespace("Biblioteca", description="Back-end Sistema de biblioteca")
+
+upload_parser = ns.parser()
+upload_parser.add_argument("file", location="files", type=FileStorage, required=True)
 
 
 @ns.route("/obras/")
@@ -57,5 +62,29 @@ class BibliotecaIdResource(Resource):
 
 
 @ns.route("/upload-obras")
+@ns.expect(upload_parser)
 class ObrasCsv(Resource):
-    pass
+    def post(self) -> None:
+
+        args = upload_parser.parse_args()
+
+        if "file" not in args:
+            flash("No file part")
+            return redirect(args.url)
+        uploaded_file = args["file"]
+
+        if uploaded_file.filename == "":
+            flash("No Selected file")
+            return redirect(args.url)
+        if uploaded_file and LivroService().allowed_file(uploaded_file.filename):
+            file_name = secure_filename(uploaded_file.filename)
+            LivroService().spawn_dict_temp(file_name)
+            path = os.path.join(os.getcwd() + "/uploads", file_name)
+
+            uploaded_file.save(path)
+
+            LivroService().save_data_csv_db(path)
+
+            LivroService().delete_csv(path)
+
+            return Response(status=200)
