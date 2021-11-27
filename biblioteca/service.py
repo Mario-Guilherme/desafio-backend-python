@@ -139,3 +139,9 @@ class LivroService:
     def spawn_dict_temp():
         if not os.path.exists(os.path.join(os.getcwd(), "uploads")):
             os.makedirs(os.path.join(os.getcwd(), "uploads"))
+
+    @staticmethod
+    def allowed_file(filename):
+        return (
+            "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+        )
