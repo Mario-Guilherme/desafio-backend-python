@@ -1,10 +1,11 @@
 from flask import abort
+from sqlalchemy.orm import selectin_polymorphic, session
 from biblioteca.models import Livro, Autor
 from database import db_session
 from biblioteca.interface import LivroInterface, AutorInterface
 from biblioteca.schema import LivroSchema, AutorSchema
 
-from typing import Any, List, Union
+from typing import Any, Iterable, List, Union
 
 import json
 
@@ -43,13 +44,19 @@ class LivroService:
 
     ############################# DELETE ###############################################
     def delete_by_id(self, livro: Livro, autores: List[str]) -> None:
+        self.delete_autor(autores)
+        self.delete_livro(livro)
 
+    @staticmethod
+    def delete_livro(livro: Livro) -> None:
+        db_session.delete(livro)
+        db_session.commit()
+
+    @staticmethod
+    def delete_autor(autores: List[str]) -> None:
         for autor in autores:
             db_session.delete(autor)
             db_session.commit()
-
-        db_session.delete(livro)
-        db_session.commit()
 
     @staticmethod
     def find_id_livro(id: int) -> Livro:
@@ -77,7 +84,7 @@ class LivroService:
             autor = Autor(autor=autor_x, livro_id=livro_id)
             self.__save_db(autor)
             autores_list.append(autor_x)
-        print(autores_list)
+
         return autores_list
 
     def create(self, data_atributte: interface_livro_autor) -> interface_livro_autor:
@@ -94,11 +101,12 @@ class LivroService:
     def put_livro_autor():
         pass
 
+    @staticmethod
     def find_existing_livro(titulo: str, editora: str, foto: str) -> Union[Livro, Any]:
         existing_livro = (
             Livro.query.filter(Livro.titulo == titulo)
             .filter(Livro.editora == editora)
             .filter(Livro.foto == foto)
-            .one_or_none()
+            .first()
         )
         return existing_livro
