@@ -156,3 +156,8 @@ class LivroService:
                     foto=str(row["foto"]),
                 )
                 self.create_autor(livro_id=livro.id, autores=eval(row["autores"]))
+
+    @staticmethod
+    def delete_csv(path):
+        if os.path.exists(path):
+            os.remove(path)
