@@ -26,10 +26,29 @@ class BibliotecaResource(Resource):
         return Response(response=livro_service.create(data_atributte=data), status=201)
 
 
-@ns.route("/obras/<int:id>")
+@ns.route("/obras/<int:id>/")
 class BibliotecaIdResource(Resource):
-    def put(self, id):
-        pass
+    def put(self, id: int):
+        livro_service = LivroService()
+        livro = livro_service.find_id_livro(id)
+        data = request.json
+        print(data)
+
+        existing_livro = livro_service.find_existing_livro(
+            data["titulo"], data["editora"], data["foto"]
+        )
+        if livro is None:
+            abort(404, f"Livro not found for Id: {id}")
+        elif existing_livro is not None and existing_livro.id != id:
+            abort(409, "Livro exists already")
+        else:
+            autores = livro_service.find_id_autor(livro.id)
+            livro_service.update_livro(
+                livro, data["titulo"], data["editora"], data["foto"]
+            )
+            livro_service.update_autor(autores, data["autores"], livro.id)
+
+        return data
 
     def delete(self, id):
         livro = LivroService().find_id_livro(id)
