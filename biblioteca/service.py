@@ -1,4 +1,4 @@
-from flask import abort
+from flask import config
 from sqlalchemy.orm import selectin_polymorphic, session
 from biblioteca.models import Livro, Autor
 from database import db_session
@@ -8,9 +8,13 @@ from biblioteca.schema import LivroSchema, AutorSchema
 from typing import Any, Iterable, List, Union
 
 import json
+import csv
+
+import os
 
 
 interface_livro_autor = Union[LivroInterface, AutorInterface]
+ALLOWED_EXTENSIONS = {"csv"}
 
 
 class LivroService:
@@ -130,3 +134,8 @@ class LivroService:
         for autor_new in autores_news:
             autor = Autor(autor=autor_new, livro_id=livro_id)
             self.__save_db(autor)
+
+    @staticmethod
+    def spawn_dict_temp():
+        if not os.path.exists(os.path.join(os.getcwd(), "uploads")):
+            os.makedirs(os.path.join(os.getcwd(), "uploads"))
