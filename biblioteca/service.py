@@ -110,3 +110,8 @@ class LivroService:
             .first()
         )
         return existing_livro
+
+    @staticmethod
+    def __update_db(value: Any) -> None:
+        db_session.merge(value)
+        db_session.commit()
