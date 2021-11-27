@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database import Base
-from biblioteca.interface import BibliotecaInterface
 
 from typing import List
 
@@ -17,11 +16,6 @@ class Livro(Base):
 
     autores = relationship("Autor", backref="livro")
 
-    def update(self, changes: BibliotecaInterface):
-        for key, val in changes.items():
-            setattr(self, key, val)
-        return self
-
     def __repr__(self) -> str:
         return f"<Title {self.titulo}>"
 
@@ -32,4 +26,7 @@ class Autor(Base):
     id: int = Column(Integer, primary_key=True)
     autor: str = Column(String)
 
-    project_id = Column(Integer, ForeignKey("livro.id"))
+    livro_id = Column(Integer, ForeignKey("livro.id"))
+
+    def __repr__(self) -> str:
+        return f"<Title {self.autor}>"
