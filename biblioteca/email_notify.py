@@ -31,5 +31,17 @@ class SendEmail:
         message.attach(MIMEText(body, "plain"))
         return message
 
+    def convert_file_base64(self):
+        attachment = open(self.__path_file, "rb")
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload((attachment).read())
+        encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition", "attachment; filename= %s" % self.__path_file
+        )
+        message = self.create_mail_to_send()
+        message.attach(part)
+        attachment.close()
+
     def __login(self):
         return self.__server.login(self.__sender_email, self.__password)
