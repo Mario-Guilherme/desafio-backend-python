@@ -1,6 +1,6 @@
 import json
 
-from flask import request, abort, redirect, flash
+from flask import request, abort, redirect, flash, jsonify
 from flask_restx import Namespace, Resource
 from flask.wrappers import Response
 from werkzeug.datastructures import FileStorage
@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from biblioteca.models import Livro, Autor
 from biblioteca.schema import LivroSchema, AutorSchema
 from biblioteca.service import LivroService
+from biblioteca.task import send_email
 
 import os
 
@@ -90,6 +91,10 @@ class ObrasCsv(Resource):
             return Response(status=200)
 
 
-@ns.route("/file-obras/")
+@ns.route("/file-obras/<string:email>")
 class BibliotecaNotify(Resource):
-    pass
+    def post(self, email: str) -> Response:
+
+        send_email.delay(email)
+
+        return Response(status=202)
