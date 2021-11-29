@@ -9,17 +9,15 @@ from email import encoders
 
 class SendEmail:
     def __init__(
-        self, port=465, path_file: str = None, receiver_email: str = None
+        self, port=587, path_file: str = None, receiver_email: str = None
     ) -> None:
 
         self.__sender_email = "auxilioestudantilnotificador@gmail.com"
         self.__password = "Shr@46/*+as/ASasj_*$%1"
         self.__server_email = "smtp.gmail.com"
         self.__receiver_email = receiver_email
-        self.__context = ssl.create_default_context()
-        self.__server = smtplib.SMTP_SSL(
-            self.__server_email, port, context=self.__context
-        )
+        self.__port = port
+        # self.__server = smtplib.SMTP(self.__server_email, 587)
         self.__path_file = path_file
 
     def create_mail_to_send(self) -> MIMEMultipart:
@@ -42,6 +40,17 @@ class SendEmail:
         message = self.create_mail_to_send()
         message.attach(part)
         attachment.close()
+        return message
 
     def __login(self):
-        return self.__server.login(self.__sender_email, self.__password)
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(self.__sender_email, self.__password)
+
+        return server
+
+    def send_csv(self):
+        server = self.__login()
+        message = self.convert_file_base64().as_string()
+        server.sendmail(self.__sender_email, self.__receiver_email, message)
+        server.quit()
