@@ -1,10 +1,10 @@
-import celery
 from flask import config
 from sqlalchemy.orm import selectin_polymorphic, session
 from biblioteca.models import Livro, Autor
 from database import db_session
 from biblioteca.interface import LivroInterface, AutorInterface
 from biblioteca.schema import LivroSchema, AutorSchema
+from biblioteca.email_notify import SendEmail
 from celery import Celery
 from typing import Any, Iterable, List, Union
 
@@ -13,19 +13,14 @@ import csv
 
 import os
 
+import pandas as pd
+
 
 interface_livro_autor = Union[LivroInterface, AutorInterface]
 ALLOWED_EXTENSIONS = {"csv"}
-app_celery = app = Celery(
-    "tasks",
-    backend="amqp://admin:admin@localhost:5672/",
-    broker="amqp://admin:admin@localhost:5672/",
-)
 
 
 class LivroService:
-    def __init__(self) -> None:
-        pass
 
     ######################### GET #############################
     @staticmethod
@@ -41,14 +36,15 @@ class LivroService:
         livros_autores = []
         dicionario_livro_autor = {}
         for livro in livros:
-            dicionario_livro_autor["titulo"] = livro.titulo
-            dicionario_livro_autor["editora"] = livro.editora
-            dicionario_livro_autor["foto"] = livro.foto
+            dicionario_livro_autor.update({"titulo": livro.titulo})
+            dicionario_livro_autor.update({"editora": livro.editora})
+            dicionario_livro_autor.update({"foto": livro.foto})
 
             autores = self.get_autor(livro.id)
             autores_lista = [autor.autor for autor in autores]
-            dicionario_livro_autor["autores"] = autores_lista
+            dicionario_livro_autor.update({"autores": autores_lista})
             livros_autores.append(dicionario_livro_autor)
+            dicionario_livro_autor = {}
 
         return json.dumps(livros_autores)
 
@@ -168,9 +164,9 @@ class LivroService:
         if os.path.exists(path):
             os.remove(path)
 
-    @app_celery.task
-    def send_email(email) -> None:
-        pass
-
-    def make_file_to_email(self):
-        pass
+    def make_file_to_email(self) -> str:
+        all_data = self.get_all()
+        path_file = "uploads/dados_livros.csv"
+        self.spawn_dict_temp()
+        pd.DataFrame(json.loads(all_data)).to_csv(path_file, index=False)
+        return path_file
