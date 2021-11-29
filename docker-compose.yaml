@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  db-postgres:
+    image: postgres:latest
+    hostname: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - .:/var/lib/postgresql/data
+    networks:
+      - api-biblioteca
+  
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/api/app
+    entrypoint: []
+    command: ["python","main.py"]
+    depends_on:
+      - "db-postgres"
+      - "rabbitmq"
+    networks:
+      - api-biblioteca
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - .:/data
+    networks:
+      - api-biblioteca
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - api-biblioteca
+  
+  worker:
+    build: 
+      context: .
+    depends_on:
+      - "rabbitmq"
+      - "api"
+    command: celery -A biblioteca.task worker 
+ 
+  flower:
+    build: 
+      context: .
+    depends_on:
+      - "rabbitmq"
+    command: celery --broker=amqp://admin:admin@rabbitmq:5672// flower 
+      
+
+networks:
+  api-biblioteca:
+    driver: bridge

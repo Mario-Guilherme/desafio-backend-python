@@ -1,0 +1,10 @@
+# Ignore everything
+**
+
+# ... except for dependencies and source
+!Pipfile
+!Pipfile.lock
+!biblioteca/
+!*.py
+!Dockerfile
+!*.sh
