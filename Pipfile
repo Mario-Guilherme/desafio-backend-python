@@ -5,6 +5,14 @@ name = "pypi"
 
 [packages]
 pre-commit = "*"
+flask-accepts = "*"
+marshmallow = "*"
+celery = "*"
+marshmallow-sqlalchemy = "*"
+sqlalchemy = "*"
+flask = "*"
+pandas = "*"
+flower = "*"
 
 [dev-packages]
 
