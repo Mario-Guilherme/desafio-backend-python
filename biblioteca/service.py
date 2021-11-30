@@ -1,11 +1,7 @@
-from flask import config
-from sqlalchemy.orm import selectin_polymorphic, session
 from biblioteca.models import Livro, Autor
 from database import db_session
 from biblioteca.interface import LivroInterface, AutorInterface
-from biblioteca.schema import LivroSchema, AutorSchema
-from biblioteca.email_notify import SendEmail
-from celery import Celery
+
 from typing import Any, Iterable, List, Union
 
 import json
