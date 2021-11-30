@@ -1,13 +1,12 @@
 import json
 
-from flask import request, abort, redirect, flash, jsonify
+from flask import request, abort, redirect, flash
 from flask_restx import Namespace, Resource
 from flask.wrappers import Response
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from biblioteca.models import Livro, Autor
-from biblioteca.schema import LivroSchema, AutorSchema
+
 from biblioteca.service import LivroService
 from biblioteca.task import send_email
 
@@ -30,6 +29,11 @@ class BibliotecaResource(Resource):
     def post(self) -> Response:
         data = request.json
         livro_service = LivroService()
+
+        if "titulo" not in data or "editora" not in data or "foto" not in data  or  'autor' not in 'autor':
+            abort(400,"Missing one or more fields")
+        
+
         return Response(response=livro_service.create(data_atributte=data), status=201)
 
 
@@ -40,6 +44,9 @@ class BibliotecaIdResource(Resource):
         livro = livro_service.find_id_livro(id)
         data = request.json
 
+        if "titulo" not in data or "editora" not in data or "foto" not in data  or  'autor' not in 'autor':
+            abort(400,"Missing one or more fields")
+
         if livro is None:
             abort(404, f"Livro not found for Id: {id}")
         else:
@@ -49,7 +56,7 @@ class BibliotecaIdResource(Resource):
             )
             livro_service.update_autor(autores, data["autores"], livro.id)
 
-        return Response(response=json(data), status=200)
+        return Response(response=json.dumps(data), status=200)
 
     def delete(self, id):
         livro = LivroService().find_id_livro(id)
@@ -91,10 +98,13 @@ class ObrasCsv(Resource):
             return Response(status=200)
 
 
-@ns.route("/file-obras/<string:email>")
+@ns.route("/file-obras/")
 class BibliotecaNotify(Resource):
-    def post(self, email: str) -> Response:
-
-        send_email.delay(email)
+    def post(self) -> Response:
+        data = request.json
+        if data['email'] != '' or 'email' not in data:
+            send_email.delay(data['email'])
+        else:
+            abort(400,"error: missing field email")
 
         return Response(status=202)
