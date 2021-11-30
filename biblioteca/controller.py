@@ -1,13 +1,12 @@
 import json
 
-from flask import request, abort, redirect, flash, jsonify
+from flask import request, abort, redirect, flash
 from flask_restx import Namespace, Resource
 from flask.wrappers import Response
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from biblioteca.models import Livro, Autor
-from biblioteca.schema import LivroSchema, AutorSchema
+
 from biblioteca.service import LivroService
 from biblioteca.task import send_email
 
@@ -30,6 +29,11 @@ class BibliotecaResource(Resource):
     def post(self) -> Response:
         data = request.json
         livro_service = LivroService()
+
+        if "titulo" not in data and "editora" not in data and "foto" not in data  and  'autor' not in 'autor':
+            abort(404,"Missing one or more fields")
+        
+
         return Response(response=livro_service.create(data_atributte=data), status=201)
 
 
@@ -91,10 +95,13 @@ class ObrasCsv(Resource):
             return Response(status=200)
 
 
-@ns.route("/file-obras/<string:email>")
+@ns.route("/file-obras/")
 class BibliotecaNotify(Resource):
-    def post(self, email: str) -> Response:
-
-        send_email.delay(email)
+    def post(self) -> Response:
+        data = request.json
+        if data['email'] != '' or 'email' not in data:
+            send_email.delay(data['email'])
+        else:
+            abort(400,"error: email not null")
 
         return Response(status=202)
