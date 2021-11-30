@@ -42,7 +42,7 @@ $ docker-compose up --build
 No seu Browser acesse : [http://localhost:5000/](http://localhost:5000)
 
 ## Rotas da API
-!(API)[api_flask.png]
+![API](api_flask.png)
 
 
 
@@ -83,9 +83,11 @@ Deleta a partir do id da requisição.
 
 Método POST [http://localhost:5000/upload-obras](http://localhost:5000/upload-obras) 
 deverá ser enviado um arquivo .csv para a rota com o formato:
-!(formato)[formato_csv.png]
+
+![formato](formato_csv.png)
 Caso não funcione enviar a partir da rota Pela documentação da API funcionará
-!(doc_api)[post_upload.png]
+
+![doc_api](post_upload.png)
 
 
 
