@@ -30,8 +30,8 @@ class BibliotecaResource(Resource):
         data = request.json
         livro_service = LivroService()
 
-        if "titulo" not in data and "editora" not in data and "foto" not in data  and  'autor' not in 'autor':
-            abort(404,"Missing one or more fields")
+        if "titulo" not in data or "editora" not in data or "foto" not in data  or  'autor' not in 'autor':
+            abort(400,"Missing one or more fields")
         
 
         return Response(response=livro_service.create(data_atributte=data), status=201)
@@ -44,6 +44,9 @@ class BibliotecaIdResource(Resource):
         livro = livro_service.find_id_livro(id)
         data = request.json
 
+        if "titulo" not in data or "editora" not in data or "foto" not in data  or  'autor' not in 'autor':
+            abort(400,"Missing one or more fields")
+
         if livro is None:
             abort(404, f"Livro not found for Id: {id}")
         else:
@@ -53,7 +56,7 @@ class BibliotecaIdResource(Resource):
             )
             livro_service.update_autor(autores, data["autores"], livro.id)
 
-        return Response(response=json(data), status=200)
+        return Response(response=json.dumps(data), status=200)
 
     def delete(self, id):
         livro = LivroService().find_id_livro(id)
@@ -102,6 +105,6 @@ class BibliotecaNotify(Resource):
         if data['email'] != '' or 'email' not in data:
             send_email.delay(data['email'])
         else:
-            abort(400,"error: email not null")
+            abort(400,"error: missing field email")
 
         return Response(status=202)
