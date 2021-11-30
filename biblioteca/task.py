@@ -2,16 +2,11 @@ from biblioteca.email_notify import SendEmail
 from biblioteca.service import LivroService
 from celery import Celery
 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 
 app_celery = Celery(
     "tasks",
     backend="rpc://",
-    broker="amqp://admin:admin@rabbitmq:5672/",
+    broker="amqp://admin:admin@rabbitmq:5672/"
 )
 
 
