@@ -11,8 +11,6 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
-    volumes:
-      - .:/var/lib/postgresql/data
     networks:
       - api-biblioteca
   
@@ -53,22 +51,28 @@ services:
     networks:
       - api-biblioteca
   
+  # 
   worker:
     build: 
       context: .
+    #entrypoint: "sh -c '/wait-for-it.sh rabbitmq:5672'"
     depends_on:
       - "rabbitmq"
       - "api"
-    command: celery -A biblioteca.task worker 
+    command: celery -A biblioteca.task worker --loglevel=INFO
+    networks:
+      - api-biblioteca
  
   flower:
     build: 
       context: .
     depends_on:
       - "rabbitmq"
+    
     command: celery --broker=amqp://admin:admin@rabbitmq:5672// flower 
+    networks:
+      - api-biblioteca
       
-
 networks:
   api-biblioteca:
     driver: bridge
